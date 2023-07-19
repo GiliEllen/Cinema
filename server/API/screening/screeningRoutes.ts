@@ -2,7 +2,8 @@ import express from "express";
 import {
     createScreening,
     deleteAllScreeningsByFilmId,
-    getAllScreenings
+    getAllScreenings,
+    getScreeningByDay
 } from "./screeningCtrl";
 
 const router = express.Router();
@@ -12,6 +13,7 @@ router //.post("", createScreening)
     //.get("", get-all-screenings)
     //.patch("/:screeingid)
     .get("/allScreenings", getAllScreenings)
+    .get("/:day", getScreeningByDay)
     //.get("/:screeingid", getScreeningBYId)
     .delete("/film/:filmId", deleteAllScreeningsByFilmId)
 

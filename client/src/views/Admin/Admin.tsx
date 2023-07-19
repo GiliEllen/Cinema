@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import AddFilm from "../../components/AddFilm/AddFilm";
 import FilmList from "../../components/FilmList/FilmList";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { adminSelector } from "../../features/admin/adminSlise";
 import { getByCookie } from "../../features/admin/adminApi";

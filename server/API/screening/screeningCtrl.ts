@@ -24,6 +24,18 @@ export async function createScreening(
   }
 }
 
+export async function getScreeningByDay(req, res) {
+  try {
+    const {day} = req.params
+    const screeningsDB = await ScreeningModel.find({day}).populate("filmId");
+
+    // const screeningDB = await ScreeningModel.find().populate("filmId");
+    // const screeningDB = await ScreeningModel.find({"filmId": filmId});
+    res.send({ screeningsDB });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
 export async function getAllScreenings(req, res) {
   try {
     const screeningDB = await ScreeningModel.find();

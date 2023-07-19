@@ -1,5 +1,6 @@
-import axios from "axios";
+// import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
+import axios from "axios";
 
 interface MovieDayTime {
   day: string;

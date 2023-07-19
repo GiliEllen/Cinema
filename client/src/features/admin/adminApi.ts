@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+
 import { Admin } from "./adminModel";
+import axios from "axios";
 
 export const getByCookie = createAsyncThunk(
   "getByCookie",

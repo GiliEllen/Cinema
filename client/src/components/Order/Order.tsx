@@ -1,9 +1,9 @@
 import React, { FC, useState, useEffect } from "react";
 import { FilmsType } from "../../types/films";
-import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import { FilmsToOrderType } from "../../types/filmToOrder";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 interface OrderProps {
   orderType: string;
   orderDisp: string;
@@ -13,90 +13,51 @@ interface OrderProps {
 const Order: FC<OrderProps> = ({ orderType, orderDisp, setOrderDisp }) => {
   const [daySelected, setDaySeleted] = useState<string>();
   const [films, setFilms] = useState<FilmsType[]>();
-  const [filmsList, setFilmsList] = useState<FilmsToOrderType[]>([]);
+  const [filmsList, setFilmsList] = useState<any[]>([]);
   const [filterdFilms, setFilterdFilms] = useState<FilmsType[]>();
   const [filmsByDay, setFilmsByDay] = useState<FilmsType>();
   const [option, setOption] = useState<string>();
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {};
-
-  const handleDay = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    setDaySeleted(ev.target.value);
-  };
-
-  const handleOption = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    setOption(ev.target.value)
-  };
-
-  async function handleGetFilms() {
+  const handleClick = async (ev: any) => {
     try {
-      const { data } = await axios.get("/api/film/allFilms");
-
-      if (data) {
-        setFilms(data.filmsDB);
-        setFilterdFilms(data.filmsDB)
-      }
+      navigate(`/order/${ev.target.value}`);
     } catch (error) {
       console.error(error);
     }
-  }
-
-  const handleCreateFilmsList = () => {
-    films?.map((e) => {
-      let id = e._id;
-      let title = e.title;
-      let genree = e.genree;
-
-      e.screeningTimes.map((d) => {
-        let day = d.day;
-        let dayId = d._id;
-        d.times.map((t) => {
-          let time = t;
-
-          setFilmsList([...filmsList, {id, title, genree, day, dayId, time}])
-        })
-      })
-    })
-  }
-
-  const filmsBySelectedDay = () => {
-    console.log(filmsList)
   };
 
-  useEffect(() => {
-    handleGetFilms();
-  }, []);
-
-  useEffect(() => {
-    handleCreateFilmsList();
-  }, [films]);
-
-  useEffect(() => {
-    if(option == ""){
-      setFilterdFilms(films)
-    } else {
-      if(option){
-        setFilterdFilms(films?.filter((e) => e.genree.includes(option)))
-      }
+  const handleDay = async () => {
+    try {
+      const { data } = await axios.get(`/api/screening/${daySelected}`);
+      console.log(data);
+      setFilmsList(data.screeningsDB);
+    } catch (error) {
+      console.error(error);
     }
-  }, [option]);
-
+  };
   useEffect(() => {
-    filmsBySelectedDay();
+    handleDay();
   }, [daySelected]);
 
   return (
     <div className={orderType} style={{ display: orderDisp }}>
-      {(orderType=="navBarOrder") ? <CloseIcon
-        className={`${orderType}__close`}
-        onClick={() => setOrderDisp("none")}
-      /> : <></>}
-      <form className={`${orderType}__form`} onSubmit={handleSubmit}>
+      {orderType == "navBarOrder" ? (
+        <CloseIcon
+          className={`${orderType}__close`}
+          onClick={() => setOrderDisp("none")}
+        />
+      ) : (
+        <></>
+      )}
+      <form className={`${orderType}__form`}>
         <div className="form__select">
-          {(orderType=="homeOrder") ? <h1>Order a ticket</h1> : <></>}
+          {orderType == "homeOrder" ? <h1>Order a ticket</h1> : <></>}
           <select
             value={daySelected}
-            onChange={handleDay}
+            onChange={(ev) => {
+              setDaySeleted(ev.target.value);
+            }}
             className="form__dayOption__select"
           >
             <option value={""}>Day</option>
@@ -108,16 +69,26 @@ const Order: FC<OrderProps> = ({ orderType, orderDisp, setOrderDisp }) => {
             <option value={"Friday"}>Friday</option>
             <option value={"Saturday"}>Saturday</option>
           </select>
-          <select
-            value={option}
-            onChange={handleOption}
-            className="form__dayOption__select"
-          >
-            <option value={""}>Option</option>
-            <option value={"Comedy"}>Comedy</option>
-            <option value={"Horror"}>Horror</option>
-            <option value={"Action"}>Action</option>
-          </select>
+          <div>
+            <h3>Select film:</h3>
+            {filmsList.length > 0 ? (
+              <div style={{ overflowY: "scroll" }}>
+                {filmsList.map((screening) => {
+                  return (
+                    <div>
+                      <h3>{screening.filmId.title}</h3>
+                      <h5>time: {screening.time}</h5>
+                      <button onClick={handleClick} value={screening._id}>
+                        ORDER NOW
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div>Nope</div>
+            )}
+          </div>
         </div>
         <div className="form__films">
           <div className="form__films__list"></div>

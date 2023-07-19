@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { FilmsType } from "../../types/films";
-import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+
 
 const FilmPage = () => {
   const [age, setAge] = useState<string>();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import MovieCreationTwoToneIcon from "@mui/icons-material/MovieCreationTwoTone";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { adminSelector } from "../../features/admin/adminSlise";
@@ -11,6 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { search } from "../../features/search/search";
 import Search from "../Search/Search";
 import Order from "../Order/Order";
+import axios from "axios";
 
 const NavBar = () => {
   const navigate = useNavigate();
