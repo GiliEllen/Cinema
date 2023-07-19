@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import MovieCreationTwoToneIcon from "@mui/icons-material/MovieCreationTwoTone";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -12,12 +12,19 @@ import { search } from "../../features/search/search";
 import Search from "../Search/Search";
 import Order from "../Order/Order";
 import axios from "axios";
+import { FilmsType } from "../../types/films";
 
-const NavBar = () => {
+interface NavbarProps {
+  films: FilmsType[];
+  filmsToDisp: FilmsType[];
+  setFilmsToDisp: CallableFunction;
+}
+
+const NavBar: FC<NavbarProps> = ({ films, filmsToDisp, setFilmsToDisp }) => {
   const navigate = useNavigate();
   const admin = useAppSelector(adminSelector);
   const orderType = "navBarOrder";
-  const [orderDisp, setOrderDisp]= useState("block");
+  const [orderDisp, setOrderDisp] = useState("block");
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -88,19 +95,44 @@ const NavBar = () => {
   }, []);
 
   useEffect(() => {
-    console.log(searchValue)
-    dispatch(
-      search({
-        searchValue,
-        ageSearch,
-        genreeSearch,
-      })
-    );
+    console.log(searchValue);
+    handleSearch();
   }, [searchValue, genreeSearch, ageSearch]);
+
+  const handleSearch = () => {
+    const regex = new RegExp(`^${searchValue}`, "i");
+
+    let newFilmArr = films.filter((e: any) => {
+      if(regex.test(e.title)) {
+        return e
+      }
+    });
+    // let newFilmArr = films.filter((e: any) => regex.test(e.title));
+
+    // if (ageSearch != "all")
+    //   if (ageSearch != "0+") {
+    //     if (ageSearch == "14+") {
+    //       newFilmArr = newFilmArr.filter((e: any) => e.age !== "0+");
+    //     } else {
+    //       newFilmArr = newFilmArr.filter((e: any) => e.age == ageSearch);
+    //     }
+    //   }
+    // if (genreeSearch != "all") {
+    //   newFilmArr = newFilmArr.filter((e: any) =>
+    //     e.genree.includes(`${genreeSearch}`)
+    //   );
+    // }
+
+    console.log(newFilmArr);
+
+    setFilmsToDisp(newFilmArr);
+  };
 
   return (
     <div className="navBar" style={smallNav ? { opacity: "0.9" } : {}}>
-      <h2 className="navBar__order" onClick={()=>setOrderDisp("block")}>Order a ticket</h2>
+      <h2 className="navBar__order" onClick={() => setOrderDisp("block")}>
+        Order a ticket
+      </h2>
       <Search
         setSearchValue={setSearchValue}
         setGenreeSearch={setGenreeSearch}
@@ -167,7 +199,11 @@ const NavBar = () => {
           </button>
         </form>
       </div>
-      <Order orderType={orderType} orderDisp={orderDisp}  setOrderDisp={setOrderDisp} />
+      <Order
+        orderType={orderType}
+        orderDisp={orderDisp}
+        setOrderDisp={setOrderDisp}
+      />
     </div>
   );
 };
